@@ -2,11 +2,9 @@ MIT License
 
 Copyright (c) 2026 OpenPX
 
-This license applies to the OpenPX schema and the accompanying content published
-at https://schema.openpx.org (the "Software") — the JSON Schema files, the
-manifest, and the example documents served from that site. It does NOT apply to
-the OpenPX monorepo, the publishing tooling, or any other OpenPX software, which
-are licensed separately.
+This license applies only to the OpenPX schema and the accompanying content
+published at https://schema.openpx.org (the "Software") — the JSON Schema files,
+the manifest, and the example documents served from that site.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

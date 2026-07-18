@@ -3,8 +3,7 @@ OpenPX Trademark & Brand Notice
 
 The OpenPX schema published at https://schema.openpx.org is released under the
 MIT License (see LICENSE). Open licensing of the schema is intentional — we want
-OpenPX to be freely implemented. (The MIT License covers this published schema
-site only, not the OpenPX monorepo or other OpenPX software.)
+OpenPX to be freely implemented.
 
 The MIT License covers the schema and code ONLY. It does NOT grant any right to
 use the OpenPX name or logo.
