@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenPX Schema Registry</title>
+  <meta name="description" content="The canonical, versioned JSON Schema for Open Product Exchange (OpenPX)." />
+  <link rel="icon" href="/logo.png" />
+  <style>
+    :root {
+      --bg: #0d0f12;
+      --panel: #16191e;
+      --border: #2a2f37;
+      --text: #f7f3ec;
+      --muted: #9aa3ad;
+      --accent: #f5f1e8;
+      --code-bg: #1c2027;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+    header { display: flex; align-items: center; gap: 18px; margin-bottom: 8px; }
+    header img { height: 44px; width: auto; }
+    .badge {
+      display: inline-block; margin-left: auto; padding: 4px 12px; border: 1px solid var(--border);
+      border-radius: 999px; color: var(--muted); font-size: 13px; letter-spacing: .02em;
+    }
+    h1 { font-size: 22px; font-weight: 600; margin: 32px 0 8px; }
+    p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--border); }
+    a:hover { border-bottom-color: var(--accent); }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+    }
+    .card .k { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+    .card .v { margin-top: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; word-break: break-all; }
+    h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 36px 0 10px; }
+    pre {
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    ul.links { list-style: none; padding: 0; }
+    ul.links li { padding: 6px 0; border-bottom: 1px solid var(--border); }
+    footer { margin-top: 56px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } header img { height: 36px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="/logo.png" alt="OpenPX" />
+      <span class="badge">Schema Registry</span>
+    </header>
+
+    <h1>OpenPX Schema Registry</h1>
+    <p class="lead">
+      The canonical, versioned <strong>JSON Schema</strong> for
+      <a href="https://www.openpx.org/">Open Product Exchange</a> — the open, verifiable standard
+      for exchanging product information across manufacturers, distributors, retailers, and
+      marketplaces. Every OpenPX document's <code>$id</code> resolves here.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="k">Current version</div>
+        <div class="v">v0.6.1</div>
+      </div>
+      <div class="card">
+        <div class="k">Canonical schema</div>
+        <div class="v"><a href="https://schema.openpx.org/v0.6.1/openpx-schema.json">/v0.6.1/openpx-schema.json</a></div>
+      </div>
+    </div>
+
+    <h2>Reference it</h2>
+    <pre><code>{
+  "$schema": "https://schema.openpx.org/v0.6.1/openpx-schema.json",
+  "openpx": "0.6.1",
+  "product": { "...": "..." }
+}</code></pre>
+
+    <h2>Validate it</h2>
+    <pre><code># Python
+pip install jsonschema
+python - &lt;&lt;'PY'
+import json, urllib.request, jsonschema
+schema = json.load(urllib.request.urlopen("https://schema.openpx.org/v0.6.1/openpx-schema.json"))
+doc = json.load(open("my-product.json"))
+jsonschema.Draft7Validator(schema).validate(doc)
+print("valid")
+PY
+
+# JavaScript (ajv, draft-07)
+npx ajv-cli validate -s <(curl -s https://schema.openpx.org/v0.6.1/openpx-schema.json) -d my-product.json</code></pre>
+
+    <h2>Resources</h2>
+    <ul class="links">
+      <li><a href="https://schema.openpx.org/latest/openpx-schema.json">latest/openpx-schema.json</a> — moving alias to the newest version</li>
+      <li><a href="https://schema.openpx.org/index.json">index.json</a> — machine-readable manifest (all versions, integrity hashes)</li>
+      <li><a href="https://schema.openpx.org/examples/product.json">examples/product.json</a> — a valid example document</li>
+      <li><a href="https://schema.openpx.org/llms.txt">llms.txt</a> — curated map for AI agents</li>
+      <li><a href="https://schema.openpx.org/v0.6.1/openpx-schema.json.sha256">v0.6.1/openpx-schema.json.sha256</a> — integrity hash</li>
+      <li><a href="https://www.openpx.org/">openpx.org</a> — about OpenPX</li>
+    </ul>
+
+    <footer>
+      Schemas are immutable per version — <code>v{MAJOR}.{MINOR}.{PATCH}</code> URLs never change.
+      <br /><br />
+      &copy; 2026 OpenPX. The OpenPX schema is released under the
+      <a href="https://schema.openpx.org/LICENSE">MIT License</a>. OpenPX&trade; and the OpenPX logo
+      are trademarks of OpenPX and are not covered by that license — see the
+      <a href="https://schema.openpx.org/TRADEMARKS">Trademark &amp; Brand Notice</a>.
+    </footer>
+  </div>
+</body>
+</html>

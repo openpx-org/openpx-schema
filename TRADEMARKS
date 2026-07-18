@@ -1,0 +1,36 @@
+OpenPX Trademark & Brand Notice
+================================
+
+The OpenPX schema published at https://schema.openpx.org is released under the
+MIT License (see LICENSE). Open licensing of the schema is intentional — we want
+OpenPX to be freely implemented. (The MIT License covers this published schema
+site only, not the OpenPX monorepo or other OpenPX software.)
+
+The MIT License covers the schema and code ONLY. It does NOT grant any right to
+use the OpenPX name or logo.
+
+OpenPX(TM), the OpenPX name, and the OpenPX logo (together, the "OpenPX Marks")
+are trademarks of OpenPX. We maintain these marks so that "OpenPX" continues to
+identify the authentic standard and its governance — an open standard people can
+trust needs a controlled name.
+
+You MAY, without asking us first:
+  - Truthfully state that your product, library, or service supports, implements,
+    is built on, or is compatible with OpenPX (nominative/descriptive use).
+  - Link to https://schema.openpx.org and reference OpenPX versions by name.
+
+You MAY NOT, without our prior written permission:
+  - Use the OpenPX Marks in any way that suggests endorsement, sponsorship,
+    certification, or affiliation that does not exist.
+  - Use "OpenPX" (or a confusingly similar name or logo) as the name of your own
+    product, service, company, organization, domain, or social account.
+  - Alter, recolor, distort, or re-draw the OpenPX logo, or use it as your own
+    brand or app icon.
+  - Register the OpenPX Marks, or confusingly similar marks, as your own.
+
+Compatibility/badge use (e.g. "Works with OpenPX") is permitted only in a way
+that is clearly descriptive and does not imply official certification.
+
+Questions or permission requests: https://www.openpx.org/
+
+(c) 2026 OpenPX. All rights reserved with respect to the OpenPX Marks.

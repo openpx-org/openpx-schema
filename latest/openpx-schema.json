@@ -1,0 +1,1876 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.openpx.org/v0.6.1/openpx-schema.json",
+  "title": "OpenPX V0.6.1 Schema",
+  "description": "JSON Schema validation rules for Open Product Exchange V0.6.1 — adds optional content.seo_title and content.seo_description (SEO/meta fields on the shared content definition; product/variant/listing, #1724). V0.6.0 added product/variant channel_content (#1718)",
+  "type": "object",
+  "required": ["openpx"],
+  "properties": {
+    "openpx": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "OpenPX schema version"
+    },
+    "organization": {
+      "$ref": "#/definitions/organization"
+    },
+    "brand": {
+      "$ref": "#/definitions/brand"
+    },
+    "product": {
+      "$ref": "#/definitions/product"
+    },
+    "variant": {
+      "$ref": "#/definitions/variant"
+    },
+    "listing": {
+      "$ref": "#/definitions/listing"
+    },
+    "signature": {
+      "$ref": "#/definitions/signature"
+    }
+  },
+  "definitions": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "description": "UUID v7 format (RFC 9562) - time-ordered, monotonic"
+    },
+    "organization_identifiers": {
+      "type": "object",
+      "required": ["slug"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$",
+          "description": "URL-safe identifier (lowercase, hyphens allowed). Cannot start or end with a hyphen, and no consecutive hyphens."
+        },
+        "duns": {
+          "type": ["string", "null"],
+          "pattern": "^\\d{9}$",
+          "description": "D-U-N-S Number (9 digits)"
+        },
+        "gln": {
+          "type": ["string", "null"],
+          "pattern": "^\\d{13}$",
+          "description": "GS1 Global Location Number (13 digits)"
+        }
+      }
+    },
+    "brand_identifiers": {
+      "type": "object",
+      "required": ["slug"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$",
+          "description": "URL-safe identifier within organization (lowercase, hyphens allowed). Cannot start or end with a hyphen, and no consecutive hyphens."
+        }
+      }
+    },
+    "organization": {
+      "type": "object",
+      "required": ["id", "name", "identifiers"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "identifiers": {
+          "$ref": "#/definitions/organization_identifiers"
+        },
+        "logo_url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "archived"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "signing": {
+          "type": "object",
+          "required": ["key_ref", "algorithm"],
+          "properties": {
+            "key_ref": {
+              "type": "string",
+              "pattern": "^\\.openpx/keys/[a-z0-9_-]+-\\d{4}-\\d{2}-\\d{2}\\.pub$",
+              "description": "Path to the organization's public signing key"
+            },
+            "algorithm": {
+              "type": "string",
+              "enum": ["Ed25519"],
+              "description": "Signing algorithm used by this organization"
+            }
+          }
+        }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "required": ["id", "organization_id", "name", "identifiers"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "organization_id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "identifiers": {
+          "$ref": "#/definitions/brand_identifiers"
+        },
+        "logo_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "story": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "maxItems": 10
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "archived"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "access_control": {
+          "$ref": "#/definitions/access_control"
+        }
+      }
+    },
+    "product": {
+      "type": "object",
+      "required": ["id", "brand_id", "status", "identifiers", "classification", "content"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "brand_id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "archived"]
+        },
+        "condition": {
+          "type": "string",
+          "enum": ["new", "used", "refurbished"],
+          "description": "Product condition. Defaults to 'new' if not specified."
+        },
+        "identifiers": {
+          "type": "object",
+          "anyOf": [
+            {"required": ["sku"]},
+            {"required": ["gtin"]},
+            {"required": ["upc"]},
+            {"required": ["ean"]},
+            {"required": ["mpn"]},
+            {"required": ["model_number"]},
+            {"required": ["usda_fdc_id"]},
+            {"required": ["asin"]},
+            {"required": ["nsn"]}
+          ],
+          "properties": {
+            "sku": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "gtin": {
+              "type": "string",
+              "pattern": "^\\d{8,14}$",
+              "description": "Global Trade Item Number (GTIN-8/12/13/14)"
+            },
+            "upc": {
+              "type": "string",
+              "pattern": "^\\d{12}$",
+              "description": "Universal Product Code (12 digits)"
+            },
+            "ean": {
+              "type": "string",
+              "pattern": "^\\d{13}$",
+              "description": "European Article Number (13 digits)"
+            },
+            "mpn": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "model_number": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "usda_fdc_id": {
+              "type": "string",
+              "pattern": "^\\d+$",
+              "description": "USDA FoodData Central database ID"
+            },
+            "asin": {
+              "type": "string",
+              "maxLength": 10,
+              "pattern": "^[A-Z0-9]{10}$",
+              "description": "Amazon Standard Identification Number (exactly 10 uppercase alphanumeric characters)"
+            },
+            "nsn": {
+              "type": "string",
+              "maxLength": 16,
+              "pattern": "^[0-9A-Z]{4}-[0-9A-Z]{2}-[0-9A-Z]{3}-[0-9A-Z]{4}$|^[0-9A-Z][0-9A-Z-]{0,15}$",
+              "description": "NATO Stock Number — hyphenated NATO form (e.g. 1234-56-789-1234) or local/alphanumeric form (e.g. 850519-S01)"
+            }
+          }
+        },
+        "classification": {
+          "type": "object",
+          "required": ["primary_category"],
+          "properties": {
+            "primary_category_id": {
+              "type": ["string", "null"],
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "description": "UUID v7 FK to openpx_category.id (populated after taxonomy tables exist)"
+            },
+            "primary_category": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500,
+              "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$",
+              "description": "Dot-separated ltree path (e.g., openpx.food_beverage.bakery.bread)"
+            },
+            "product_type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "category_schema_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to category-specific attribute validation schema (optional). If provided, product.attributes will be validated against this schema in addition to base schema."
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50
+              },
+              "maxItems": 50
+            },
+            "external_codes": {
+              "type": "object",
+              "properties": {
+                "unspsc": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                "eclass": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                "etim": {
+                  "type": "string",
+                  "pattern": "^EC\\d{6}$"
+                }
+              }
+            }
+          }
+        },
+        "content": {
+          "allOf": [
+            { "$ref": "#/definitions/content" },
+            { "required": ["locale", "name", "description_short"] }
+          ]
+        },
+        "channel_content": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/content" },
+          "description": "Per-channel content variants, keyed by channel identifier (e.g. 'amazon-seller', 'walmart', 'shopify'). Each entry has the shape of `content` (all fields optional, extra keys allowed); sparse-override, deep-merged over `content` when a listing for that channel is created."
+        },
+        "attributes": { "$ref": "#/definitions/open_attributes" },
+        "physical": {
+          "$ref": "#/definitions/physical_specifications"
+        },
+        "media_assets": {
+          "$ref": "#/definitions/media_assets"
+        },
+        "compliance": {
+          "$ref": "#/definitions/compliance"
+        },
+        "assurances": {
+          "$ref": "#/definitions/assurances"
+        },
+        "instructions": {
+          "$ref": "#/definitions/instructions"
+        },
+        "pricing": {
+          "$ref": "#/definitions/pricing"
+        },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/relationship" },
+          "maxItems": 100
+        },
+        "brand_groupings": {
+          "$ref": "#/definitions/brand_groupings"
+        },
+        "technical_data": {
+          "type": "object",
+          "description": "Measured/tested technical properties grouped by section name",
+          "maxProperties": 20,
+          "additionalProperties": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" },
+                  { "type": "boolean" }
+                ]
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of canonical JSON representation"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/variant"
+          },
+          "description": "Embedded variants for this product. Each variant is a sparse override — only include fields that differ from the product."
+        },
+        "access_control": {
+          "$ref": "#/definitions/access_control"
+        }
+      }
+    },
+    "media_assets": {
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/image_asset"
+          },
+          "maxItems": 50
+        },
+        "videos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/video_asset"
+          },
+          "maxItems": 10
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/document_asset"
+          },
+          "maxItems": 20
+        },
+        "ar_vr_models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ar_vr_asset"
+          },
+          "maxItems": 5
+        }
+      }
+    },
+    "image_asset": {
+      "type": "object",
+      "required": ["url", "type"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "alt_text": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "type": {
+          "type": "string",
+          "enum": ["primary", "alternate", "lifestyle", "detail", "size_chart", "ingredient", "nutrition"]
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "format": {
+          "type": "string",
+          "enum": ["jpg", "png", "webp", "gif"]
+        }
+      }
+    },
+    "video_asset": {
+      "type": "object",
+      "required": ["url", "type"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "thumbnail_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": ["demo", "unboxing", "tutorial", "lifestyle", "testimonial"]
+        }
+      }
+    },
+    "document_asset": {
+      "type": "object",
+      "required": ["url", "type", "title"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["manual", "spec_sheet", "warranty", "installation_guide", "safety_sheet", "catalog"]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "locale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}-[A-Z]{2}$"
+        }
+      }
+    },
+    "ar_vr_asset": {
+      "type": "object",
+      "required": ["url", "format"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["glb", "usdz", "obj", "fbx"]
+        },
+        "file_size_mb": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "$ref": "#/definitions/product_origin"
+        },
+        "certifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/certification"
+          }
+        },
+        "warnings": {
+          "type": "object",
+          "properties": {
+            "prop65": {
+              "type": "boolean"
+            },
+            "choking_hazard": {
+              "type": "boolean"
+            },
+            "age_restriction": {
+              "type": "string",
+              "pattern": "^\\d+\\+$"
+            },
+            "baa_taa_compliant": {
+              "type": "boolean",
+              "description": "Compliant with US Buy American Act (BAA) / Trade Agreements Act (TAA) for federal procurement"
+            },
+            "taa_compliant_country": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2 country code asserting TAA compliance (designated country of origin under Trade Agreements Act)"
+            }
+          }
+        },
+        "hazmat": {
+          "type": "object",
+          "description": "Hazardous materials compliance data (regulation, UN code, GHS, SDS URL). Sibling to warnings: warnings carries boolean attestations; hazmat carries structured regulatory data.",
+          "properties": {
+            "is_hazmat": {
+              "type": "boolean",
+              "description": "Product classified as hazardous material"
+            },
+            "regulation": {
+              "type": "string",
+              "enum": ["ghs", "storage", "transportation", "waste", "other", "not_applicable"],
+              "description": "Dangerous-goods regulatory framework declaration (mirrors Amazon supplier_declared_dg_hz_regulation)"
+            },
+            "un_regulatory_id": {
+              "type": "string",
+              "pattern": "^UN\\d{4}$",
+              "description": "UN regulatory identifier (e.g. UN1993)"
+            },
+            "ghs_classification": {
+              "type": "object",
+              "description": "Globally Harmonized System hazard classification",
+              "properties": {
+                "class": {
+                  "type": "string",
+                  "enum": [
+                    "explosive",
+                    "flammable",
+                    "oxidizing",
+                    "compressed_gas",
+                    "corrosive",
+                    "toxic",
+                    "harmful_irritant",
+                    "health_hazard",
+                    "environmental_hazard",
+                    "other"
+                  ]
+                },
+                "category": { "type": "string" },
+                "signal_word": {
+                  "type": "string",
+                  "enum": ["danger", "warning"]
+                },
+                "hazard_statement": { "type": "string" },
+                "h_code": { "type": "string" }
+              },
+              "additionalProperties": false
+            },
+            "safety_data_sheet_url": {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 2048,
+              "description": "URL to the Safety Data Sheet (SDS or MSDS) document"
+            }
+          },
+          "additionalProperties": false
+        },
+        "media": {
+          "type": "array",
+          "description": "URLs to compliance-related media (certificates, declarations, regulatory documents). Generic complement to safety_data_sheet_url under hazmat; used for any compliance regime requiring document attestations.",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          }
+        },
+        "safety_attestation": {
+          "type": "boolean",
+          "description": "Attestation that product meets applicable safety regulations for its category and channel scope"
+        },
+        "gpsr": {
+          "type": "object",
+          "description": "EU General Product Safety Regulation (GPSR, effective 2024) compliance fields. Article 4 (Responsible Person), Article 9 (Manufacturer obligations).",
+          "properties": {
+            "manufacturer_reference": {
+              "type": "string",
+              "description": "GPSR manufacturer identifier (importer/manufacturer reference declaration)"
+            },
+            "responsible_person": {
+              "type": "object",
+              "description": "EU-resident Responsible Person contact (Article 4 of GPSR)",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string", "format": "email" },
+                "address": { "type": "string", "maxLength": 1024 },
+                "phone": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "sustainability": {
+          "$ref": "#/definitions/sustainability"
+        }
+      }
+    },
+    "sustainability": {
+      "type": "object",
+      "description": "Sustainability metrics, material claims, carbon footprint, and environmental declarations",
+      "properties": {
+        "claims": {
+          "type": "object",
+          "properties": {
+            "recyclable": { "type": "boolean" },
+            "recycled_content_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+            "renewable_materials_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+            "compostable": { "type": "boolean" },
+            "biodegradable": { "type": "boolean" },
+            "green_purchasing_compliant": {
+              "type": "boolean",
+              "description": "Compliant with US Federal Green Purchasing Law (FAR 23.703 — environmentally preferred products)"
+            }
+          }
+        },
+        "carbon": {
+          "type": "object",
+          "properties": {
+            "footprint": {
+              "type": "object",
+              "required": ["value", "unit", "scope"],
+              "properties": {
+                "value": { "type": "number", "minimum": 0 },
+                "unit": { "type": "string", "enum": ["kgCO2e", "tCO2e"] },
+                "scope": { "type": "string", "enum": ["cradle_to_gate", "cradle_to_grave", "cradle_to_cradle"] },
+                "standard": { "type": "string", "maxLength": 100 }
+              }
+            }
+          }
+        },
+        "environmental_declarations": {
+          "type": "array",
+          "maxItems": 20,
+          "items": { "$ref": "#/definitions/environmental_declaration" }
+        }
+      }
+    },
+    "environmental_declaration": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "enum": ["epd", "hpd", "lca"] },
+        "standard": { "type": "string", "maxLength": 100 },
+        "program_operator": { "type": "string", "maxLength": 200 },
+        "registration_number": { "type": "string", "maxLength": 100 },
+        "expiry_date": { "type": "string", "format": "date", "description": "ISO 8601 date" },
+        "document_url": { "type": "string", "format": "uri", "maxLength": 2000 }
+      }
+    },
+    "product_origin": {
+      "type": "object",
+      "properties": {
+        "country_of_origin": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code where raw materials originate"
+        },
+        "country_of_assembly": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code where product is assembled"
+        },
+        "country_of_last_processing": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code where last substantial transformation occurs"
+        },
+        "country_of_design": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code where product is designed"
+        }
+      }
+    },
+    "assurances": {
+      "type": "object",
+      "properties": {
+        "warranty": {
+          "$ref": "#/definitions/warranty"
+        },
+        "return_policy": {
+          "$ref": "#/definitions/return_policy"
+        }
+      }
+    },
+    "instructions": {
+      "type": "object",
+      "description": "Human-facing operational guidance for using and caring for the product",
+      "properties": {
+        "locale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}-[A-Z]{2}$",
+          "description": "BCP 47 locale code (e.g., en-US)"
+        },
+        "preparation": { "type": "string", "maxLength": 2000, "description": "Steps to ready the product before first use" },
+        "installation": { "type": "string", "maxLength": 2000, "description": "Setup or assembly instructions" },
+        "usage": { "type": "string", "maxLength": 2000, "description": "How to operate or use the product" },
+        "application": { "type": "string", "maxLength": 2000, "description": "Surface, material, or context suitability" },
+        "safety": { "type": "string", "maxLength": 2000, "description": "Safety warnings and precautions during use" },
+        "storage": { "type": "string", "maxLength": 2000, "description": "How to store the product when not in use" },
+        "cleaning": { "type": "string", "maxLength": 2000, "description": "How to clean or care for the product itself" },
+        "maintenance": { "type": "string", "maxLength": 2000, "description": "Ongoing upkeep to extend product life" },
+        "disposal": { "type": "string", "maxLength": 2000, "description": "End-of-life handling, recycling, or disposal guidance" },
+        "clean_up": { "type": "string", "maxLength": 2000, "description": "How to clean tools or work area after use" }
+      }
+    },
+    "warranty": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["standard", "extended"]
+        },
+        "duration": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["day", "month", "year"]
+            }
+          }
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["limited", "full", "replacement_only"]
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 5000,
+          "description": "Free-text warranty description, disclaimer, or legal prose"
+        }
+      }
+    },
+    "return_policy": {
+      "type": "object",
+      "properties": {
+        "window_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 365
+        },
+        "free_return": {
+          "type": "boolean"
+        }
+      }
+    },
+    "certification": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9 _./()\\-]{0,99}$",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Standard reference such as 'UL', 'UL Listed', 'ISO 11148-6', 'ATEX 2014/34/EU'. Accepts letters, digits, spaces, underscores, dots, slashes, parens, hyphens. Cannot contain commas or semicolons — those are list separators handled by the CSV mapper."
+        },
+        "number": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "expiry_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "document_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "description": "Variant is a sparse override of product fields. Only include fields that differ from the parent product. All product fields can be overridden except id, brand_id, and classification.",
+      "required": ["id", "product_id"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "product_id": {
+          "$ref": "#/definitions/uuid",
+          "description": "Reference to parent product. Variant inherits all product fields unless explicitly overridden."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "archived"],
+          "description": "Optional - inherits from product if not specified"
+        },
+        "condition": {
+          "type": "string",
+          "enum": ["new", "used", "refurbished"],
+          "description": "Optional - inherits from product if not specified"
+        },
+        "identifiers": {
+          "type": "object",
+          "description": "Only include identifiers that differ from product. SKU typically overridden for each variant.",
+          "properties": {
+            "sku": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "gtin": {
+              "type": "string",
+              "pattern": "^\\d{8,14}$"
+            },
+            "upc": {
+              "type": "string",
+              "pattern": "^\\d{12}$"
+            },
+            "ean": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "mpn": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "model_number": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "usda_fdc_id": {
+              "type": "string",
+              "pattern": "^\\d+$",
+              "description": "USDA FoodData Central database ID"
+            },
+            "asin": {
+              "type": "string",
+              "maxLength": 10,
+              "pattern": "^[A-Z0-9]{10}$",
+              "description": "Amazon Standard Identification Number (exactly 10 uppercase alphanumeric characters)"
+            },
+            "nsn": {
+              "type": "string",
+              "maxLength": 16,
+              "pattern": "^[0-9A-Z]{4}-[0-9A-Z]{2}-[0-9A-Z]{3}-[0-9A-Z]{4}$|^[0-9A-Z][0-9A-Z-]{0,15}$",
+              "description": "NATO Stock Number — hyphenated NATO form (e.g. 1234-56-789-1234) or local/alphanumeric form (e.g. 850519-S01)"
+            }
+          }
+        },
+        "attributes": { "$ref": "#/definitions/open_attributes" },
+        "physical": {
+          "$ref": "#/definitions/physical_specifications",
+          "description": "Only include physical specs that differ from product (e.g., weight varies by size)"
+        },
+        "content": {
+          "$ref": "#/definitions/content",
+          "description": "Rarely overridden, but possible for variant-specific content"
+        },
+        "channel_content": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/content" },
+          "description": "Per-channel variant content variants, keyed by channel identifier. Each entry has the shape of `content` (all fields optional, extra keys allowed); sparse-override, deep-merged over variant `content` when a listing for that channel is created."
+        },
+        "media_assets": {
+          "$ref": "#/definitions/media_assets",
+          "description": "Variant can override product media. Arrays replace (not merge)."
+        },
+        "compliance": {
+          "$ref": "#/definitions/compliance"
+        },
+        "assurances": {
+          "$ref": "#/definitions/assurances"
+        },
+        "instructions": {
+          "$ref": "#/definitions/instructions"
+        },
+        "pricing": {
+          "$ref": "#/definitions/pricing"
+        },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/relationship" },
+          "maxItems": 100
+        },
+        "brand_groupings": {
+          "$ref": "#/definitions/brand_groupings"
+        },
+        "technical_data": {
+          "type": "object",
+          "description": "Measured/tested technical properties grouped by section name",
+          "maxProperties": 20,
+          "additionalProperties": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" },
+                  { "type": "boolean" }
+                ]
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of canonical JSON representation"
+        }
+      }
+    },
+    "physical_specifications": {
+      "type": "object",
+      "properties": {
+        "weight": {
+          "$ref": "#/definitions/weight_measurement"
+        },
+        "dimensions": {
+          "$ref": "#/definitions/dimensions_measurement"
+        },
+        "package_weight": {
+          "$ref": "#/definitions/weight_measurement"
+        },
+        "package_dimensions": {
+          "$ref": "#/definitions/dimensions_measurement"
+        }
+      }
+    },
+    "weight_measurement": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["lb", "kg", "g", "oz"]
+        }
+      }
+    },
+    "dimensions_measurement": {
+      "type": "object",
+      "required": ["length", "width", "height", "unit"],
+      "properties": {
+        "length": {
+          "type": "number",
+          "minimum": 0
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["in", "cm", "mm", "ft", "m"]
+        }
+      }
+    },
+    "typed_attribute_value": {
+      "type": "object",
+      "description": "Open-attribute measurement value: a numeric value with a free-form unit of measure.",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit":  { "type": "string", "minLength": 1, "maxLength": 32 }
+      },
+      "additionalProperties": false
+    },
+    "typed_attribute_range": {
+      "type": "object",
+      "description": "Open-attribute measurement range: numeric min and max with a free-form unit of measure.",
+      "required": ["min", "max", "unit"],
+      "properties": {
+        "min":  { "type": "number" },
+        "max":  { "type": "number" },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 32 }
+      },
+      "additionalProperties": false
+    },
+    "open_attribute_value": {
+      "description": "Permitted value shapes for an open attribute: scalar, null, measurement {value,unit}, or range {min,max,unit}.",
+      "oneOf": [
+        { "type": "string", "maxLength": 100 },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "null" },
+        { "$ref": "#/definitions/typed_attribute_value" },
+        { "$ref": "#/definitions/typed_attribute_range" }
+      ]
+    },
+    "open_attributes": {
+      "type": "object",
+      "description": "Open attribute bag: five universal string attributes (color/size/material/finish/pattern) plus arbitrary additional attributes whose values follow open_attribute_value (scalar | {value,unit} | {min,max,unit} | null). e.g. processor_brand: 'intel', ram_gb: 16, weight_capacity: {value: 50, unit: 'kg'}.",
+      "properties": {
+        "color":    { "type": "string", "maxLength": 100 },
+        "size":     { "type": "string", "maxLength": 100 },
+        "material": { "type": "string", "maxLength": 100 },
+        "finish":   { "type": "string", "maxLength": 100 },
+        "pattern":  { "type": "string", "maxLength": 100 }
+      },
+      "additionalProperties": { "$ref": "#/definitions/open_attribute_value" }
+    },
+    "listing": {
+      "type": "object",
+      "required": ["id", "product_id", "channel", "channel_account_id", "status", "content"],
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/uuid"
+        },
+        "product_id": {
+          "$ref": "#/definitions/uuid",
+          "description": "Reference to the product this listing is for"
+        },
+        "brand_id": {
+          "$ref": "#/definitions/uuid",
+          "description": "Relationship FK to the brand entity. Mirrors product.brand_id; consumer connectors resolve brand data via brands/{brand_id}.json at sync time. Optional."
+        },
+        "channel": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,49}$",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "Channel identifier. See config/schemas/registries/channels.json for known values."
+        },
+        "channel_account_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "pending", "active", "error", "delisted", "suspended"]
+        },
+        "condition": {
+          "type": "string",
+          "enum": ["new", "used", "refurbished"],
+          "description": "Optional - inherits from product if not specified"
+        },
+        "content": {
+          "allOf": [
+            { "$ref": "#/definitions/content" },
+            { "required": ["name"] }
+          ]
+        },
+        "identifiers": {
+          "type": "object",
+          "description": "Channel-level identifier overrides",
+          "properties": {
+            "sku": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "gtin": {
+              "type": "string",
+              "pattern": "^\\d{8,14}$"
+            },
+            "upc": {
+              "type": "string",
+              "pattern": "^\\d{12}$"
+            },
+            "ean": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "mpn": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "model_number": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "usda_fdc_id": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "asin": {
+              "type": "string",
+              "maxLength": 10,
+              "pattern": "^[A-Z0-9]{10}$",
+              "description": "Amazon Standard Identification Number (exactly 10 uppercase alphanumeric characters)"
+            },
+            "nsn": {
+              "type": "string",
+              "maxLength": 16,
+              "pattern": "^[0-9A-Z]{4}-[0-9A-Z]{2}-[0-9A-Z]{3}-[0-9A-Z]{4}$|^[0-9A-Z][0-9A-Z-]{0,15}$",
+              "description": "NATO Stock Number — hyphenated NATO form (e.g. 1234-56-789-1234) or local/alphanumeric form (e.g. 850519-S01)"
+            }
+          }
+        },
+        "classification": {
+          "type": "object",
+          "description": "Channel-level classification overrides",
+          "properties": {
+            "primary_category": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "product_type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50
+              },
+              "maxItems": 50
+            },
+            "external_codes": {
+              "type": "object",
+              "properties": {
+                "unspsc": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                "eclass": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                "etim": {
+                  "type": "string",
+                  "pattern": "^EC\\d{6}$"
+                }
+              }
+            }
+          }
+        },
+        "attributes": { "$ref": "#/definitions/open_attributes" },
+        "physical": {
+          "$ref": "#/definitions/physical_specifications"
+        },
+        "media_assets": {
+          "$ref": "#/definitions/media_assets"
+        },
+        "compliance": {
+          "$ref": "#/definitions/compliance"
+        },
+        "assurances": {
+          "$ref": "#/definitions/assurances"
+        },
+        "instructions": {
+          "$ref": "#/definitions/instructions"
+        },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/relationship" },
+          "maxItems": 50
+        },
+        "brand_groupings": {
+          "$ref": "#/definitions/brand_groupings"
+        },
+        "technical_data": {
+          "type": "object",
+          "description": "Technical specifications",
+          "additionalProperties": true
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "pricing": {
+          "$ref": "#/definitions/pricing"
+        },
+        "availability": {
+          "$ref": "#/definitions/availability"
+        },
+        "shipping": {
+          "$ref": "#/definitions/shipping"
+        },
+        "access_control": {
+          "$ref": "#/definitions/access_control"
+        },
+        "syndication": {
+          "$ref": "#/definitions/syndication_metadata"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/recommendation" },
+          "maxItems": 50
+        },
+        "variants": {
+          "type": "array",
+          "description": "Variant-level listing details. Each entry is a sparse override of listing-level defaults.",
+          "items": {
+            "type": "object",
+            "required": ["variant_id"],
+            "properties": {
+              "variant_id": {
+                "$ref": "#/definitions/uuid",
+                "description": "Reference to the variant in the product"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["draft", "pending", "active", "error", "delisted", "suspended"]
+              },
+              "condition": {
+                "type": "string",
+                "enum": ["new", "used", "refurbished"]
+              },
+              "identifiers": {
+                "type": "object",
+                "properties": {
+                  "sku": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "gtin": {
+                    "type": "string",
+                    "pattern": "^\\d{8,14}$"
+                  },
+                  "upc": {
+                    "type": "string",
+                    "pattern": "^\\d{12}$"
+                  },
+                  "ean": {
+                    "type": "string",
+                    "pattern": "^\\d{13}$"
+                  },
+                  "mpn": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "model_number": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "usda_fdc_id": {
+                    "type": "string",
+                    "pattern": "^\\d+$"
+                  },
+                  "asin": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "pattern": "^[A-Z0-9]{10}$",
+                    "description": "Amazon Standard Identification Number (exactly 10 uppercase alphanumeric characters)"
+                  },
+                  "nsn": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "pattern": "^[0-9A-Z]{4}-[0-9A-Z]{2}-[0-9A-Z]{3}-[0-9A-Z]{4}$|^[0-9A-Z][0-9A-Z-]{0,15}$",
+                    "description": "NATO Stock Number — hyphenated NATO form (e.g. 1234-56-789-1234) or local/alphanumeric form (e.g. 850519-S01)"
+                  }
+                }
+              },
+              "classification": {
+                "type": "object",
+                "properties": {
+                  "primary_category": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "product_type": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 50
+                    },
+                    "maxItems": 50
+                  }
+                }
+              },
+              "content": {
+                "$ref": "#/definitions/content"
+              },
+              "attributes": { "$ref": "#/definitions/open_attributes" },
+              "physical": {
+                "$ref": "#/definitions/physical_specifications"
+              },
+              "media_assets": {
+                "$ref": "#/definitions/media_assets"
+              },
+              "compliance": {
+                "$ref": "#/definitions/compliance"
+              },
+              "assurances": {
+                "$ref": "#/definitions/assurances"
+              },
+              "instructions": {
+                "$ref": "#/definitions/instructions"
+              },
+              "relationships": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/relationship" }
+              },
+              "brand_groupings": {
+                "$ref": "#/definitions/brand_groupings"
+              },
+              "technical_data": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "pricing": {
+                "$ref": "#/definitions/pricing"
+              },
+              "availability": {
+                "$ref": "#/definitions/availability"
+              },
+              "shipping": {
+                "$ref": "#/definitions/shipping"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of canonical JSON representation"
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "locale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}-[A-Z]{2}$",
+          "default": "en-US",
+          "description": "Locale code for this content (e.g., en-US, fr-CA)"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "model_name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Buyer-facing marketing/series model name (e.g. Amazon model_name 'W3000 Series 20V Impact Wrench'). Distinct from content.name (full title) and identifiers.model_number/mpn (part number). Optional; not added to any required set."
+        },
+        "description_short": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "description_long": {
+          "type": "string",
+          "maxLength": 50000
+        },
+        "seo_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "SEO/meta title for search engines and channel listing pages. Optional; not added to any required set."
+        },
+        "seo_description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "SEO/meta description for search engines and channel listing pages. Optional; not added to any required set."
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "maxItems": 20
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "maxItems": 50
+        }
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "required": ["currency"],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "list_price": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "sale_price": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "map_price": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "msrp": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "cost": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "tier_pricing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tier_price"
+          },
+          "maxItems": 10
+        },
+        "promotional_pricing": {
+          "$ref": "#/definitions/promotional_pricing"
+        }
+      }
+    },
+    "tier_price": {
+      "type": "object",
+      "required": ["min_quantity", "price"],
+      "properties": {
+        "min_quantity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "price": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        }
+      }
+    },
+    "promotional_pricing": {
+      "type": "object",
+      "required": ["price", "start_date", "end_date"],
+      "properties": {
+        "price": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "start_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "promo_code": {
+          "type": "string",
+          "maxLength": 50
+        }
+      }
+    },
+    "availability": {
+      "type": "object",
+      "properties": {
+        "inventory_tracking": {
+          "type": "boolean"
+        },
+        "inventory_quantity": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inventory_policy": {
+          "type": "string",
+          "enum": ["track", "dont_track", "continue_selling"]
+        },
+        "fulfillment_method": {
+          "type": "string",
+          "enum": ["merchant", "fba", "wfs", "dropship", "sfs", "3pl"]
+        },
+        "fulfillment_latency": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "restock_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "preorder": {
+          "$ref": "#/definitions/preorder"
+        }
+      }
+    },
+    "preorder": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "availability_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 255
+        }
+      }
+    },
+    "shipping": {
+      "type": "object",
+      "properties": {
+        "free_shipping": {
+          "type": "boolean"
+        },
+        "shipping_class": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "excluded_regions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]+)?$"
+          }
+        },
+        "expedited_available": {
+          "type": "boolean"
+        },
+        "white_glove_available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "access_control": {
+      "type": "object",
+      "required": ["visibility"],
+      "properties": {
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "private", "restricted"]
+        },
+        "authorized_partners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "embargo_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "geographic_restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "usage_rights": {
+          "$ref": "#/definitions/usage_rights"
+        }
+      }
+    },
+    "usage_rights": {
+      "type": "object",
+      "properties": {
+        "can_modify_price": {
+          "type": "boolean"
+        },
+        "can_modify_content": {
+          "type": "boolean"
+        },
+        "can_use_enhanced_content": {
+          "type": "boolean"
+        },
+        "can_resyndicate": {
+          "type": "boolean"
+        },
+        "price_floor": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        },
+        "price_ceiling": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        }
+      }
+    },
+    "syndication_metadata": {
+      "type": "object",
+      "properties": {
+        "last_pushed": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_success": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_error": {
+          "$ref": "#/definitions/syndication_error"
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": ["valid", "invalid", "warnings"]
+        },
+        "validation_errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/validation_error"
+          }
+        },
+        "channel_item_id": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "channel_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "performance_metrics": {
+          "$ref": "#/definitions/performance_metrics"
+        }
+      }
+    },
+    "syndication_error": {
+      "type": "object",
+      "required": ["timestamp", "code", "message"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "code": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "details": {
+          "type": "object"
+        }
+      }
+    },
+    "validation_error": {
+      "type": "object",
+      "required": ["field", "error", "severity"],
+      "properties": {
+        "field": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "error": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"]
+        }
+      }
+    },
+    "performance_metrics": {
+      "type": "object",
+      "properties": {
+        "views": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clicks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conversions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "revenue": {
+          "type": "number",
+          "minimum": 0,
+          "multipleOf": 0.01
+        }
+      }
+    },
+    "relationship_type": {
+      "type": "string",
+      "enum": ["compatible_with", "fits", "replacement_for", "works_with", "designed_for", "requires", "includes", "accessory_for"]
+    },
+    "relationship_target": {
+      "type": "object",
+      "properties": {
+        "product_id": { "type": "string", "format": "uuid" },
+        "sku": { "type": "string", "maxLength": 100 },
+        "gtin": { "type": "string", "pattern": "^[0-9]{8,14}$" },
+        "upc": { "type": "string", "pattern": "^[0-9]{12}$" },
+        "ean": { "type": "string", "pattern": "^[0-9]{13}$" },
+        "mpn": { "type": "string", "maxLength": 100 },
+        "model_number": { "type": "string", "maxLength": 100 },
+        "usda_fdc_id": { "type": "string", "maxLength": 20 },
+        "brand": { "type": "string", "maxLength": 255 },
+        "name": { "type": "string", "maxLength": 255 }
+      },
+      "anyOf": [
+        { "required": ["product_id"] },
+        { "required": ["sku"] },
+        { "required": ["gtin"] },
+        { "required": ["upc"] },
+        { "required": ["ean"] },
+        { "required": ["mpn"] },
+        { "required": ["model_number"] },
+        { "required": ["usda_fdc_id"] },
+        { "required": ["name"] }
+      ]
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["type", "target"],
+      "properties": {
+        "type": { "$ref": "#/definitions/relationship_type" },
+        "target": { "$ref": "#/definitions/relationship_target" },
+        "note": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "recommendation_type": {
+      "type": "string",
+      "enum": ["upsell", "cross_sell", "frequently_bought_together", "customers_also_bought", "recommended", "bundle", "substitute", "similar_to", "compare_to", "alternative_to"]
+    },
+    "recommendation": {
+      "type": "object",
+      "required": ["type", "target"],
+      "properties": {
+        "type": { "$ref": "#/definitions/recommendation_type" },
+        "target": { "$ref": "#/definitions/relationship_target" },
+        "score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "source": { "type": "string", "maxLength": 100 },
+        "window": { "type": "string", "maxLength": 50 },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "brand_groupings": {
+      "type": "object",
+      "properties": {
+        "product_line": { "type": "string", "minLength": 1, "maxLength": 255, "description": "Primary brand product family" },
+        "series": { "type": "string", "minLength": 1, "maxLength": 255, "description": "Sub-family within a product line" },
+        "collection": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 255 }, "minItems": 1, "maxItems": 20, "description": "Curated or seasonal grouping(s)" },
+        "sub_brand": { "type": "string", "minLength": 1, "maxLength": 255, "description": "Distinct brand identity within parent brand" },
+        "platform": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 255 }, "minItems": 1, "maxItems": 10, "description": "Shared technology or compatibility ecosystem(s)" },
+        "generation": { "type": "string", "minLength": 1, "maxLength": 255, "description": "Version or iteration of a product line" },
+        "edition": { "type": "string", "minLength": 1, "maxLength": 255, "description": "Special variant or limited release" }
+      },
+      "additionalProperties": false
+    },
+    "signature": {
+      "type": "object",
+      "required": ["key_ref", "algorithm", "value", "signed_at"],
+      "properties": {
+        "key_ref": {
+          "type": "string",
+          "pattern": "^\\.openpx/keys/[a-z0-9_-]+-\\d{4}-\\d{2}-\\d{2}\\.pub$",
+          "description": "Path to public key file in repo (e.g., .openpx/keys/org-2025-06-15.pub)"
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["Ed25519"],
+          "description": "Signing algorithm"
+        },
+        "value": {
+          "type": "string",
+          "description": "Base64-encoded Ed25519 signature"
+        },
+        "signed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the entity was signed"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

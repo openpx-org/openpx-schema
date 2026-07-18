@@ -1,0 +1,67 @@
+{
+  "openpx": "0.6.1",
+  "product": {
+    "id": "018f4e3a-1c2b-7d3e-8f4a-5b6c7d8e9f01",
+    "organization_id": "018f4e3a-1c2b-7d3e-8f4a-5b6c7d8e9f02",
+    "brand_id": "018f4e3a-1c2b-7d3e-8f4a-5b6c7d8e9f03",
+    "content": {
+      "locale": "en-US",
+      "name": "Acme ProDrive 20V Cordless Drill",
+      "description_short": "Powerful cordless drill with brushless motor",
+      "description_long": "The Acme ProDrive 20V Cordless Drill features a high-performance brushless motor for maximum efficiency and runtime. Ideal for professional contractors and serious DIY enthusiasts.",
+      "features": [
+        "Brushless motor for extended runtime",
+        "Compact, lightweight design",
+        "Variable speed trigger for precision",
+        "LED work light for visibility"
+      ]
+    },
+    "identifiers": {
+      "sku": "ACM-DRL-2000",
+      "gtin": "00012345000058",
+      "mpn": "APT-CDD20",
+      "model_number": "APT-CDD20"
+    },
+    "classification": {
+      "primary_category": "tools_home_improvement.power_tools.drills",
+      "product_type": "Cordless Drill",
+      "tags": [
+        "power-tools",
+        "cordless",
+        "20v",
+        "brushless",
+        "acme"
+      ]
+    },
+    "instructions": {
+      "locale": "en-US",
+      "usage": "Install a 1/2 in. bit into the chuck and tighten with the ratcheting chuck. Set the clutch to the desired torque setting. Press the forward/reverse button to select direction. Squeeze the variable-speed trigger to begin drilling; adjust trigger pressure to control speed.",
+      "safety": "Wear ANSI Z87.1 safety glasses at all times when operating. Keep hands away from the rotating chuck and bit. Do not drill into walls without first checking for hidden wiring or pipes. Disconnect the battery before changing bits or accessories.",
+      "storage": "Store in the included case or a dry, indoor location. Remove the battery pack before storing for extended periods."
+    },
+    "assurances": {
+      "warranty": {
+        "type": "standard",
+        "description": "Acme Power Tools warrants this product to be free of defects in material or workmanship for three (3) years from the date of purchase.",
+        "duration": {
+          "value": 3,
+          "unit": "year"
+        },
+        "scope": "limited"
+      },
+      "return_policy": {
+        "window_days": 90,
+        "free_return": true
+      }
+    },
+    "compliance": {
+      "origin": {
+        "country_of_origin": "US",
+        "country_of_assembly": "US",
+        "country_of_design": "US"
+      }
+    },
+    "visibility": "public",
+    "status": "active"
+  }
+}

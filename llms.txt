@@ -1,0 +1,33 @@
+# OpenPX Schema Registry
+
+> The canonical, versioned JSON Schema for Open Product Exchange (OpenPX) — the open,
+> verifiable standard for exchanging product information across manufacturers,
+> distributors, retailers, and marketplaces. This host serves the schema referenced by
+> every OpenPX document's `$id`.
+
+Current version: 0.6.1
+
+## Schemas
+
+- [OpenPX Core Validation Schema (current, v0.6.1)](https://schema.openpx.org/v0.6.1/openpx-schema.json): JSON Schema (Draft 7) validating a full OpenPX document — organization, brand, product (+variant), and listing (+variant). Self-contained via internal `#/definitions`.
+- [Latest (moving alias)](https://schema.openpx.org/latest/openpx-schema.json): always redirects-by-copy to the newest published version.
+- [Machine-readable manifest](https://schema.openpx.org/index.json): `index.json` — every published version, its URL, integrity hash URL, and status. Fetch this first to discover versions programmatically.
+
+## Examples
+
+- [Valid product document](https://schema.openpx.org/examples/product.json): a concrete instance that validates against the current schema. Use it to ground field semantics and structure.
+
+## Integrity
+
+- Each version has a companion `.sha256` (e.g. `https://schema.openpx.org/v0.6.1/openpx-schema.json.sha256`) — the SHA-256 of the exact served schema bytes, for pinning and verification.
+
+## How to validate
+
+- Python: `jsonschema` (Draft7Validator) against the fetched schema.
+- JavaScript: `ajv` (draft-07) against the fetched schema.
+- The schema uses only internal `#/definitions` references, so no external `$ref` resolution is required — fetch the single file and validate.
+
+## About
+
+- OpenPX: https://www.openpx.org/
+- Schema `$id` convention: `https://schema.openpx.org/v{MAJOR}.{MINOR}.{PATCH}/openpx-schema.json` (immutable, permanent per version).
