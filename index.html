@@ -94,10 +94,9 @@ schema = json.load(urllib.request.urlopen("https://schema.openpx.org/v0.6.1/open
 doc = json.load(open("my-product.json"))
 jsonschema.Draft7Validator(schema).validate(doc)
 print("valid")
-PY
-
-# JavaScript (ajv, draft-07)
-npx ajv-cli validate -s <(curl -s https://schema.openpx.org/v0.6.1/openpx-schema.json) -d my-product.json</code></pre>
+PY</code></pre>
+    <pre><code># JavaScript (ajv, draft-07)
+npx ajv-cli validate -s &lt;(curl -s https://schema.openpx.org/v0.6.1/openpx-schema.json) -d my-product.json</code></pre>
 
     <h2>Resources</h2>
     <ul class="links">
