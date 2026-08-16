@@ -4,13 +4,19 @@
   "schemas": {
     "openpx": {
       "title": "OpenPX Core Validation Schema",
-      "latest": "0.6.1",
+      "latest": "0.6.2",
       "latest_url": "https://schema.openpx.org/latest/openpx-schema.json",
       "versions": [
         {
           "version": "0.6.1",
           "url": "https://schema.openpx.org/v0.6.1/openpx-schema.json",
           "sha256_url": "https://schema.openpx.org/v0.6.1/openpx-schema.json.sha256",
+          "status": "superseded"
+        },
+        {
+          "version": "0.6.2",
+          "url": "https://schema.openpx.org/v0.6.2/openpx-schema.json",
+          "sha256_url": "https://schema.openpx.org/v0.6.2/openpx-schema.json.sha256",
           "status": "current"
         }
       ]
