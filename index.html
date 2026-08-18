@@ -70,18 +70,18 @@
     <div class="cards">
       <div class="card">
         <div class="k">Current version</div>
-        <div class="v">v0.6.2</div>
+        <div class="v">v0.6.3</div>
       </div>
       <div class="card">
         <div class="k">Canonical schema</div>
-        <div class="v"><a href="https://schema.openpx.org/v0.6.2/openpx-schema.json">/v0.6.2/openpx-schema.json</a></div>
+        <div class="v"><a href="https://schema.openpx.org/v0.6.3/openpx-schema.json">/v0.6.3/openpx-schema.json</a></div>
       </div>
     </div>
 
     <h2>Reference it</h2>
     <pre><code>{
-  "$schema": "https://schema.openpx.org/v0.6.2/openpx-schema.json",
-  "openpx": "0.6.2",
+  "$schema": "https://schema.openpx.org/v0.6.3/openpx-schema.json",
+  "openpx": "0.6.3",
   "product": { "...": "..." }
 }</code></pre>
 
@@ -90,13 +90,13 @@
 pip install jsonschema
 python - &lt;&lt;'PY'
 import json, urllib.request, jsonschema
-schema = json.load(urllib.request.urlopen("https://schema.openpx.org/v0.6.2/openpx-schema.json"))
+schema = json.load(urllib.request.urlopen("https://schema.openpx.org/v0.6.3/openpx-schema.json"))
 doc = json.load(open("my-product.json"))
 jsonschema.Draft7Validator(schema).validate(doc)
 print("valid")
 PY</code></pre>
     <pre><code># JavaScript (ajv, draft-07)
-npx ajv-cli validate -s &lt;(curl -s https://schema.openpx.org/v0.6.2/openpx-schema.json) -d my-product.json</code></pre>
+npx ajv-cli validate -s &lt;(curl -s https://schema.openpx.org/v0.6.3/openpx-schema.json) -d my-product.json</code></pre>
 
     <h2>Resources</h2>
     <ul class="links">
@@ -104,7 +104,7 @@ npx ajv-cli validate -s &lt;(curl -s https://schema.openpx.org/v0.6.2/openpx-sch
       <li><a href="https://schema.openpx.org/index.json">index.json</a> — machine-readable manifest (all versions, integrity hashes)</li>
       <li><a href="https://schema.openpx.org/examples/product.json">examples/product.json</a> — a valid example document</li>
       <li><a href="https://schema.openpx.org/llms.txt">llms.txt</a> — curated map for AI agents</li>
-      <li><a href="https://schema.openpx.org/v0.6.2/openpx-schema.json.sha256">v0.6.2/openpx-schema.json.sha256</a> — integrity hash</li>
+      <li><a href="https://schema.openpx.org/v0.6.3/openpx-schema.json.sha256">v0.6.3/openpx-schema.json.sha256</a> — integrity hash</li>
       <li><a href="https://www.openpx.org/">openpx.org</a> — about OpenPX</li>
     </ul>
 
