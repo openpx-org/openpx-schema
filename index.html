@@ -10,6 +10,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
+<script>
+  // Google Tag Manager: the same container as www.openpx.org's analytics.js (a test keeps
+  // them equal). Empty ID: nothing loads and nothing is tracked.
+  const GTM_CONTAINER_ID = 'GTM-MTQZS9WQ';
+  window.dataLayer = window.dataLayer || [];
+  if (GTM_CONTAINER_ID) {
+    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://www.googletagmanager.com/gtm.js?id=' + GTM_CONTAINER_ID;
+    document.head.appendChild(tag);
+  }
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -161,6 +174,7 @@ npx ajv-cli validate -s &lt;(curl -s https://schema.openpx.org/v0.7.0/openpx-sch
       <a href="https://www.openpx.org/developers">Developers</a>
       <a href="https://schema.openpx.org/">Schema</a>
       <a href="https://www.openpx.org/availability">Availability</a>
+      <a href="https://www.openpx.org/privacy">Privacy</a>
       <a href="https://github.com/openpx-org">GitHub</a>
       <a href="https://www.openpx.org/#early-access">Get early access</a>
     </nav>
