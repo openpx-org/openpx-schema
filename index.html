@@ -1,92 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OpenPX Schema Registry</title>
-  <meta name="description" content="The canonical, versioned JSON Schema for Open Product Exchange (OpenPX)." />
-  <link rel="icon" href="/logo.png" />
-  <style>
-    :root {
-      --bg: #0d0f12;
-      --panel: #16191e;
-      --border: #2a2f37;
-      --text: #f7f3ec;
-      --muted: #9aa3ad;
-      --accent: #f5f1e8;
-      --code-bg: #1c2027;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    .wrap { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
-    header { display: flex; align-items: center; gap: 18px; margin-bottom: 8px; }
-    header img { height: 44px; width: auto; }
-    .badge {
-      display: inline-block; margin-left: auto; padding: 4px 12px; border: 1px solid var(--border);
-      border-radius: 999px; color: var(--muted); font-size: 13px; letter-spacing: .02em;
-    }
-    h1 { font-size: 22px; font-weight: 600; margin: 32px 0 8px; }
-    p.lead { color: var(--muted); font-size: 17px; margin-top: 0; }
-    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--border); }
-    a:hover { border-bottom-color: var(--accent); }
-    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
-    .card {
-      background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
-    }
-    .card .k { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
-    .card .v { margin-top: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; word-break: break-all; }
-    h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 36px 0 10px; }
-    pre {
-      background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px;
-      padding: 16px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px;
-    }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    ul.links { list-style: none; padding: 0; }
-    ul.links li { padding: 6px 0; border-bottom: 1px solid var(--border); }
-    footer { margin-top: 56px; color: var(--muted); font-size: 13px; }
-    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } header img { height: 36px; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The OpenPX schema — schema.openpx.org</title>
+<meta name="description" content="The OpenPX schema: one shared way to describe a product, which every channel can read. The canonical, versioned JSON Schema for OpenPX.">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="glow" aria-hidden="true"></div>
+<div class="grid" aria-hidden="true"></div>
+
+<div class="page">
+
+<header class="site-header" id="top">
   <div class="wrap">
-    <header>
-      <img src="/logo.png" alt="OpenPX" />
-      <span class="badge">Schema Registry</span>
-    </header>
+    <a class="lockup" href="https://www.openpx.org/" aria-label="OpenPX home"><img src="/logo.png" alt="OpenPX"></a>
+    <nav class="nav" aria-label="Main">
+      <a href="https://www.openpx.org/standard">Standard</a>
+      <a href="https://www.openpx.org/trust">Trust</a>
+      <a href="https://www.openpx.org/channels">Channels</a>
+      <a href="https://www.openpx.org/commitments">Commitments</a>
+      <a href="https://www.openpx.org/developers">Developers</a>
+    </nav>
+    <a class="btn btn-primary btn-sm header-cta" href="https://www.openpx.org/developers#waitlist">Build your own connectors</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="top">Menu</button>
+  </div>
+</header>
 
-    <h1>OpenPX Schema Registry</h1>
-    <p class="lead">
-      The canonical, versioned <strong>JSON Schema</strong> for
-      <a href="https://www.openpx.org/">Open Product Exchange</a> — the open, verifiable standard
-      for exchanging product information across manufacturers, distributors, retailers, and
-      marketplaces. Every OpenPX document's <code>$id</code> resolves here.
-    </p>
+<main id="main">
 
-    <div class="cards">
-      <div class="card">
-        <div class="k">Current version</div>
-        <div class="v">v0.7.0</div>
-      </div>
-      <div class="card">
-        <div class="k">Canonical schema</div>
-        <div class="v"><a href="https://schema.openpx.org/v0.7.0/openpx-schema.json">/v0.7.0/openpx-schema.json</a></div>
-      </div>
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="breadcrumb"><a href="https://www.openpx.org/">OpenPX</a> / Schema</p>
+      <h1>The OpenPX schema.</h1>
+      <p class="lede">One shared way to describe a product, which every channel can read. This is the canonical, versioned JSON Schema for OpenPX<sup class="tm">™</sup>: every OpenPX document's <code>$id</code> resolves here.</p>
     </div>
+  </section>
 
-    <h2>Reference it</h2>
-    <pre><code>{
+  <section aria-labelledby="now-title">
+    <div class="wrap split" style="align-items:start">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Reference it</p>
+          <h2 id="now-title" style="margin-top:14px">Point your product at the schema.</h2>
+          <pre class="block"><code>{
   "$schema": "https://schema.openpx.org/v0.7.0/openpx-schema.json",
   "openpx": "0.7.0",
   "product": { "...": "..." }
 }</code></pre>
-
-    <h2>Validate it</h2>
-    <pre><code># Python
+        </div>
+        <div>
+          <p class="eyebrow">Validate it</p>
+          <pre class="block"><code><span class="c"># Python</span>
 pip install jsonschema
 python - &lt;&lt;'PY'
 import json, urllib.request, jsonschema
@@ -95,27 +66,118 @@ doc = json.load(open("my-product.json"))
 jsonschema.Draft7Validator(schema).validate(doc)
 print("valid")
 PY</code></pre>
-    <pre><code># JavaScript (ajv, draft-07)
+          <pre class="block"><code><span class="c"># JavaScript (ajv, draft-07)</span>
 npx ajv-cli validate -s &lt;(curl -s https://schema.openpx.org/v0.7.0/openpx-schema.json) -d my-product.json</code></pre>
+        </div>
+      </div>
+      <div class="facts" aria-label="The schema today">
+        <div class="fact"><span>Current version</span><strong>v0.7.0</strong></div>
+        <div class="fact"><span>Canonical schema</span><strong><a href="https://schema.openpx.org/v0.7.0/openpx-schema.json" style="color:var(--teal);text-decoration:none">/v0.7.0/openpx-schema.json</a></strong></div>
+        <div class="fact"><span>Describes</span><strong>Organization · Brand · Product · Listing</strong></div>
+        <div class="fact"><span>Format</span><strong>JSON Schema, draft-07</strong></div>
+        <div class="fact"><span>Versions</span><strong>Immutable once published</strong></div>
+        <div class="fact"><span>License</span><strong>MIT</strong></div>
+      </div>
+    </div>
+  </section>
 
-    <h2>Resources</h2>
-    <ul class="links">
-      <li><a href="https://schema.openpx.org/latest/openpx-schema.json">latest/openpx-schema.json</a> — moving alias to the newest version</li>
-      <li><a href="https://schema.openpx.org/index.json">index.json</a> — machine-readable manifest (all versions, integrity hashes)</li>
-      <li><a href="https://schema.openpx.org/examples/product.json">examples/product.json</a> — a valid example document</li>
-      <li><a href="https://schema.openpx.org/llms.txt">llms.txt</a> — curated map for AI agents</li>
-      <li><a href="https://schema.openpx.org/v0.7.0/openpx-schema.json.sha256">v0.7.0/openpx-schema.json.sha256</a> — integrity hash</li>
-      <li><a href="https://www.openpx.org/">openpx.org</a> — about OpenPX</li>
-    </ul>
+  <section aria-labelledby="concepts-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Concepts</p>
+        <h2 id="concepts-title" style="margin-top:14px">What the schema defines.</h2>
+        <p class="lede">Define, sign, publish, verify: the four ideas behind OpenPX, as the schema expresses them.</p>
+      </div>
+      <details class="tech" open>
+        <summary>The model, signatures and versions</summary>
+        <dl>
+          <dt>Entities</dt>
+          <dd><code>organization</code> → <code>brand</code> → <code>product</code> (+ <code>variant</code>) → <code>listing</code>, plus a <code>signature</code> block. Every document declares its schema version in <code>openpx</code>.</dd>
+          <dt>Identifiers</dt>
+          <dd>Entity ids are UUID v7 (RFC 9562), time-ordered. Products carry SKU, GTIN, UPC, EAN, MPN and model number.</dd>
+          <dt>Variants</dt>
+          <dd>A sparse override of the parent product: only the fields that differ.</dd>
+          <dt>Listings</dt>
+          <dd>A product as one channel sees it, keyed by <code>product_id</code>, <code>channel</code> and <code>channel_account_id</code>, with channel-specific content, availability, shipping and syndication status.</dd>
+          <dt>Signatures</dt>
+          <dd>Ed25519 over the entity's canonical JSON (sorted keys, UTF-8, Unicode NFC; <code>signature</code> and <code>provenance</code> excluded). <code>key_ref</code> points to the organization's public key under <code>.openpx/keys/</code>; <code>value</code> is base64; <code>signed_at</code> is ISO 8601.</dd>
+          <dt>Content hash</dt>
+          <dd><code>content_hash</code>: SHA-256 of the same canonical form, 64 hex characters.</dd>
+          <dt>Versions</dt>
+          <dd><code>vMAJOR.MINOR.PATCH</code>, immutable once published; the <code>$id</code> is the versioned URL. Each version has a <code>.sha256</code> file.</dd>
+          <dt>Media type</dt>
+          <dd><code>application/json; profile="urn:openpx:v0"</code></dd>
+          <dt>Status</dt>
+          <dd>Developer preview. Canonicalization rules are specified by the OpenPX SDK and may be refined before 1.0.</dd>
+        </dl>
+      </details>
+    </div>
+  </section>
 
-    <footer>
-      Schemas are immutable per version — <code>v{MAJOR}.{MINOR}.{PATCH}</code> URLs never change.
-      <br /><br />
-      &copy; 2026 OpenPX. The OpenPX schema is released under the
-      <a href="https://schema.openpx.org/LICENSE">MIT License</a>. OpenPX&trade; and the OpenPX logo
-      are trademarks of OpenPX and are not covered by that license — see the
-      <a href="https://schema.openpx.org/TRADEMARKS">Trademark &amp; Brand Notice</a>.
-    </footer>
+  <section aria-labelledby="res-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Resources</p>
+        <h2 id="res-title" style="margin-top:14px">Everything machine-readable.</h2>
+      </div>
+      <ul class="links">
+        <li><a href="https://schema.openpx.org/latest/openpx-schema.json">latest/openpx-schema.json</a> · a moving alias to the newest version</li>
+        <li><a href="https://schema.openpx.org/index.json">index.json</a> · machine-readable manifest: every version, with integrity hashes</li>
+        <li><a href="https://schema.openpx.org/examples/product.json">examples/product.json</a> · a valid example document</li>
+        <li><a href="https://schema.openpx.org/llms.txt">llms.txt</a> · a curated map for AI agents</li>
+        <li><a href="https://schema.openpx.org/v0.7.0/openpx-schema.json.sha256">v0.7.0/openpx-schema.json.sha256</a> · integrity hash of the exact served file</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="connectors" aria-labelledby="invite-title">
+    <div class="wrap">
+      <div class="invite">
+        <article class="card">
+          <h3 id="invite-title">Build and register your own connectors</h3>
+          <p>Build and register your own connectors and OpenPX repositories. Tell us what you'd build, and we'll invite you as the CLI, SDK and repository registration open.</p>
+          <a class="btn btn-primary" href="https://www.openpx.org/developers#waitlist">Join the developer waitlist</a>
+          <p class="note">We only use what you send us to contact you about the developer waitlist.</p>
+        </article>
+        <article class="card">
+          <h3>Using OpenPX as a brand, manufacturer or distributor?</h3>
+          <p>Describe your products once, sign them as yours, and publish them to every channel.</p>
+          <a class="btn btn-ghost" href="https://www.openpx.org/#early-access">Join the early-access list →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <img src="/logo.png" alt="OpenPX">
+    <nav aria-label="Footer">
+      <a href="https://www.openpx.org/standard">Standard</a>
+      <a href="https://www.openpx.org/trust">Trust</a>
+      <a href="https://www.openpx.org/channels">Channels</a>
+      <a href="https://www.openpx.org/commitments">Commitments</a>
+      <a href="https://www.openpx.org/developers">Developers</a>
+      <a href="https://schema.openpx.org/">Schema</a>
+      <a href="https://www.openpx.org/availability">Availability</a>
+      <a href="https://github.com/openpx-org">GitHub</a>
+      <a href="https://www.openpx.org/#early-access">Get early access</a>
+    </nav>
+    <span>Schema versions are immutable: <code>v{MAJOR}.{MINOR}.{PATCH}</code> URLs never change.</span>
+    <p class="legal">&copy; 2026 OpenPX Inc. The OpenPX schema is released under the <a href="https://schema.openpx.org/LICENSE">MIT License</a>. OpenPX and the OpenPX logo are trademarks of OpenPX Inc. and are not covered by that license; see the <a href="https://schema.openpx.org/TRADEMARKS">Trademark &amp; Brand Notice</a>.</p>
   </div>
+</footer>
+
+</div>
+
+<script>
+  const header = document.querySelector('.site-header');
+  const toggle = document.querySelector('.menu-toggle');
+  toggle.addEventListener('click', () => {
+    const open = header.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+</script>
 </body>
 </html>
